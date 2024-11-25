@@ -1,0 +1,74 @@
+class Punto:
+    """Representa un punto en un espacio 2D."""
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
+class Rectangulo:
+    """Representa un rectángulo."""
+    def __init__(self, metodo, *args):
+        if metodo == 1:
+            # Método 1: Esquina inferior izquierda + ancho y alto
+            esquina_inferior = args[0]
+            ancho = args[1]
+            alto = args[2]
+            self.width = ancho
+            self.height = alto
+            self.center = Punto(
+                esquina_inferior.x + ancho / 2,
+                esquina_inferior.y + alto / 2
+            )
+        elif metodo == 2:
+            # Método 2: Centro + ancho y alto
+            centro = args[0]
+            ancho = args[1]
+            alto = args[2]
+            self.width = ancho
+            self.height = alto
+            self.center = centro
+        elif metodo == 3:
+            # Método 3: Dos esquinas opuestas
+            esquina1 = args[0]
+            esquina2 = args[1]
+            self.width = abs(esquina2.x - esquina1.x)
+            self.height = abs(esquina2.y - esquina1.y)
+            self.center = Punto(
+                (esquina1.x + esquina2.x) / 2,
+                (esquina1.y + esquina2.y) / 2
+            )
+        else:
+            raise ValueError("Método inválido para inicializar el rectángulo.")
+
+    def calcular_area(self):
+        """Calcula el área del rectángulo."""
+        return self.width * self.height
+
+    def calcular_perimetro(self):
+        """Calcula el perímetro del rectángulo."""
+        return 2 * (self.width + self.height)
+
+    def punto_interseccion(self, punto):
+        """Devuelve True si un punto está dentro del rectángulo, False en caso contrario."""
+        x_min = self.center.x - self.width / 2
+        x_max = self.center.x + self.width / 2
+        y_min = self.center.y - self.height / 2
+        y_max = self.center.y + self.height / 2
+        return x_min <= punto.x <= x_max and y_min <= punto.y <= y_max
+
+
+class Cuadrado(Rectangulo):
+    """Representa un cuadrado, heredando de Rectangulo."""
+    def __init__(self, metodo, *args):
+        if metodo == 1 or metodo == 2:
+            lado = args[1]
+            super().__init__(metodo, args[0], lado, lado)
+        elif metodo == 3:
+            esquina1 = args[0]
+            esquina2 = args[1]
+            lado = abs(esquina2.x - esquina1.x)
+            if lado != abs(esquina2.y - esquina1.y):
+                raise ValueError("Las esquinas no forman un cuadrado.")
+            super().__init__(metodo, esquina1, esquina2)
+        else:
+            raise ValueError("Método inválido para inicializar el cuadrado.")
